@@ -4,12 +4,14 @@ import * as ui from "./ui.js";
 
 const game = new engine.Game(document.getElementById("game"), 400, 400, update);
 
-// World constants
+let hasWon = false;
+
 const world = new engine.Object(0, 0, game.width, game.height);
 const speed = 0.25;
 const friction = 0.005;
 
 const player = new engine.Object(325, 25, 40, 40).setBackground("red");
+const finish = new engine.Object(15, 390, 75, 10);
 const objects = [
     new engine.Object(10, 10, 300, 5)
         .setBackground("black"),
@@ -84,9 +86,36 @@ function update(deltaT) {
 
     player.round();
 
+    // Collision events
+    (() => {
+        if (game.getCollision(player, finish).bottom && !hasWon) {
+            hasWon = true;
+            objects.forEach(wall => {
+                wall.setBackground("lime");
+            });
+            ui.alert("You Win!", "", () => {
+                player.x = 325;
+                player.y = 25;
+                hasWon = false;
+                objects.forEach(wall => {
+                    wall.setBackground("black");
+                });
+            });
+        }
+    })();
+
     // Draw
     (() => {
         game.ctx.clearRect(world.x, world.y, world.width, world.height);
+
+        // Draw text
+        (() => {
+            game.ctx.font = "20px Arial, sans-serif";
+            game.ctx.textAlign = "center";
+            game.ctx.fillStyle = "black";
+            game.ctx.fillText("Start", 345, 20);
+            game.ctx.fillText("End", 50, 395);
+        })();
 
         game.ctx.fillStyle = player.background;
         game.ctx.fillRect(player.x, player.y, player.width, player.height);
