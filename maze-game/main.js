@@ -48,19 +48,19 @@ function update(deltaT) {
 
     // Player inputs
     if (game.keys["w"]) {
-        player.velocityY = -speed;
+        player.velocityY += -speed;
     }
 
     if (game.keys["a"]) {
-        player.velocityX = -speed;
+        player.velocityX += -speed;
     }
 
     if (game.keys["s"]) {
-        player.velocityY = speed;
+        player.velocityY += speed;
     }
 
     if (game.keys["d"]) {
-        player.velocityX = speed;
+        player.velocityX += speed;
     }
 
     const vector = engine.normalize(player.velocityX, player.velocityY);
