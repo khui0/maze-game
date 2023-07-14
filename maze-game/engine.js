@@ -85,3 +85,11 @@ export class Object {
         return this;
     }
 }
+
+export function normalize(x, y) {
+    const length = Math.sqrt(x ** 2 + y ** 2);
+    return {
+        x: x / length || 0,
+        y: y / length || 0,
+    };
+}

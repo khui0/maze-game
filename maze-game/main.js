@@ -63,24 +63,28 @@ function update(deltaT) {
         player.velocityX = speed;
     }
 
+    const vector = engine.normalize(player.velocityX, player.velocityY);
+    player.velocityX = vector.x * speed;
+    player.velocityY = vector.y * speed;
+
     // Move player
     if (!hasCollision("left") && !hasCollision("right")) {
-        const direction = player.velocityX / Math.abs(player.velocityX);
+        const sign = Math.sign(player.velocityX)
         player.velocityX = Math.abs(player.velocityX) - friction * deltaT;
         if (player.velocityX < 0) {
             player.velocityX = 0;
         }
-        player.velocityX *= direction || 0;
+        player.velocityX *= sign || 0;
         player.x += player.velocityX * deltaT;
     }
 
     if (!hasCollision("top") && !hasCollision("bottom")) {
-        const direction = player.velocityY / Math.abs(player.velocityY);
+        const sign = Math.sign(player.velocityY);
         player.velocityY = Math.abs(player.velocityY) - friction * deltaT;
         if (player.velocityY < 0) {
             player.velocityY = 0;
         }
-        player.velocityY *= direction || 0;
+        player.velocityY *= sign || 0;
         player.y += player.velocityY * deltaT;
     }
 
