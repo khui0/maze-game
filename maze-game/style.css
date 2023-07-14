@@ -1,0 +1,9 @@
+* {
+    box-sizing: border-box;
+}
+
+#game {
+    image-rendering: pixelated;
+    /* outline: 1px solid black; */
+    width: min(100%, auto);
+}
