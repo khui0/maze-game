@@ -3,6 +3,7 @@
 }
 
 body {
+    margin: 0;
     font: 16px Arial, sans-serif;
     line-height: 1.5;
 }
@@ -41,6 +42,5 @@ dialog>div:last-of-type>button {
 
 #game {
     image-rendering: pixelated;
-    /* outline: 1px solid black; */
-    width: min(100%, auto);
+    width: min(100%, 400px);
 }
