@@ -18,28 +18,6 @@ h6 {
     line-height: 1.2;
 }
 
-dialog {
-    width: min(100%, 300px);
-    padding: 10px;
-    border: 1px solid black;
-    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
-}
-
-dialog::backdrop {
-    background-color: transparent;
-}
-
-dialog>div:last-of-type {
-    display: flex;
-    flex-direction: row;
-    gap: 5px;
-    padding-top: 5px;
-}
-
-dialog>div:last-of-type>button {
-    flex: 1;
-}
-
 #game {
     image-rendering: pixelated;
     width: min(100%, 400px);

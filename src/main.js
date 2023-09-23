@@ -1,6 +1,5 @@
 import "./style.css";
 import * as engine from "./engine";
-import * as ui from "./ui.js";
 
 const game = new engine.Game(document.getElementById("game"), 400, 400, update);
 
@@ -97,14 +96,7 @@ function update(deltaT) {
             objects.forEach(wall => {
                 wall.setBackground("lime");
             });
-            ui.alert("You Win!", "", () => {
-                player.x = 325;
-                player.y = 25;
-                hasWon = false;
-                objects.forEach(wall => {
-                    wall.setBackground("black");
-                });
-            });
+            // Alert win
         }
     })();
 
