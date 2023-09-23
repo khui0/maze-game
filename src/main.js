@@ -5,7 +5,7 @@ const game = new engine.Game(document.getElementById("game"), 400, 400, update);
 
 let hasWon = false;
 
-const world = new engine.Object(0, 0, game.width, game.height);
+const world = new engine.Object(0, 0, 400, 400);
 const speed = 0.25;
 const friction = 0.005;
 
@@ -37,9 +37,9 @@ const objects = [
 ];
 
 function update(deltaT) {
-    const collision = [game.getInverseCollision(player, world)];
+    const collision = [engine.getInverseCollision(player, world)];
     objects.forEach(object => {
-        collision.push(game.getCollision(player, object));
+        collision.push(engine.getCollision(player, object));
     });
 
     player.velocityX = 0;
@@ -67,23 +67,27 @@ function update(deltaT) {
     player.velocityY = vector.y * speed;
 
     // Move player
-    if (!hasCollision("left") && !hasCollision("right")) {
+    if (true) {
         const sign = Math.sign(player.velocityX)
         player.velocityX = Math.abs(player.velocityX) - friction * deltaT;
         if (player.velocityX < 0) {
             player.velocityX = 0;
         }
         player.velocityX *= sign || 0;
+        hasCollision("left") && (player.velocityX = engine.clamp(player.velocityX, 0, Infinity));
+        hasCollision("right") && (player.velocityX = engine.clamp(player.velocityX, -Infinity, 0));
         player.x += player.velocityX * deltaT;
     }
 
-    if (!hasCollision("top") && !hasCollision("bottom")) {
+    if (true) {
         const sign = Math.sign(player.velocityY);
         player.velocityY = Math.abs(player.velocityY) - friction * deltaT;
         if (player.velocityY < 0) {
             player.velocityY = 0;
         }
         player.velocityY *= sign || 0;
+        hasCollision("top") && (player.velocityY = engine.clamp(player.velocityY, 0, Infinity));
+        hasCollision("bottom") && (player.velocityY = engine.clamp(player.velocityY, -Infinity, 0));
         player.y += player.velocityY * deltaT;
     }
 
@@ -91,7 +95,7 @@ function update(deltaT) {
 
     // Collision events
     (() => {
-        if (game.getCollision(player, finish).bottom && !hasWon) {
+        if (engine.getCollision(player, finish).bottom && !hasWon) {
             hasWon = true;
             objects.forEach(wall => {
                 wall.setBackground("lime");

@@ -1,21 +1,20 @@
 export class Game {
-    #time = Date.now();
-    #deltaT = 0;
     keys = {};
+    #deltaT = 16;
 
     constructor(canvas, width, height, update) {
         this.ctx = canvas.getContext("2d");
-        this.width = width;
-        this.height = height;
-
         canvas.width = width;
         canvas.height = height;
 
-        setInterval(() => {
-            this.#deltaT = Date.now() - this.#time;
-            this.#time = Date.now();
-            update(this.#deltaT);
-        }, 1);
+        let previous = 0;
+        function frame(time) {
+            const deltaT = time - previous;
+            previous = time;
+            update(deltaT);
+            requestAnimationFrame(frame);
+        }
+        requestAnimationFrame(frame);
 
         document.addEventListener("keydown", e => {
             this.keys[e.key] = true;
@@ -24,34 +23,6 @@ export class Game {
         document.addEventListener("keyup", e => {
             this.keys[e.key] = false;
         });
-    }
-
-    getInverseCollision = (object1, object2) => {
-        const bound1 = object1.bounds;
-        const bound2 = object2.bounds;
-        const velocityX = object1.velocityX;
-        const velocityY = object1.velocityY;
-        return {
-            "top": bound1.y1 + velocityY * this.#deltaT <= bound2.y1,
-            "bottom": bound1.y2 + velocityY * this.#deltaT >= bound2.y2,
-            "left": bound1.x1 + velocityX * this.#deltaT <= bound2.x1,
-            "right": bound1.x2 + velocityX * this.#deltaT >= bound2.x2,
-        }
-    }
-
-    getCollision = (object1, object2) => {
-        const bound1 = object1.bounds;
-        const bound2 = object2.bounds;
-        const velocityX = object1.velocityX;
-        const velocityY = object1.velocityY;
-        const above = bound1.x2 > bound2.x1 && bound1.x1 < bound2.x2;
-        const beside = bound1.y2 > bound2.y1 && bound1.y1 < bound2.y2;
-        return {
-            "top": bound1.y1 + velocityY * this.#deltaT <= bound2.y2 && bound1.y1 + velocityY * this.#deltaT >= bound2.y1 && above,
-            "bottom": bound1.y2 + velocityY * this.#deltaT >= bound2.y1 && bound1.y2 + velocityY * this.#deltaT <= bound2.y2 && above,
-            "left": bound1.x2 + velocityX * this.#deltaT >= bound2.x1 && bound1.x2 + velocityX * this.#deltaT <= bound2.x2 && beside,
-            "right": bound1.x1 + velocityX * this.#deltaT <= bound2.x2 && bound1.x1 + velocityX * this.#deltaT >= bound2.x1 && beside,
-        }
     }
 }
 
@@ -86,10 +57,38 @@ export class Object {
     }
 }
 
+export function getInverseCollision(object1, object2) {
+    const bound1 = object1.bounds;
+    const bound2 = object2.bounds;
+    return {
+        top: bound1.y1 <= bound2.y1,
+        bottom: bound1.y2 >= bound2.y2,
+        left: bound1.x1 <= bound2.x1,
+        right: bound1.x2 >= bound2.x2,
+    }
+}
+
+export function getCollision(object1, object2) {
+    const bound1 = object1.bounds;
+    const bound2 = object2.bounds;
+    const above = bound1.x2 > bound2.x1 && bound1.x1 < bound2.x2;
+    const beside = bound1.y2 > bound2.y1 && bound1.y1 < bound2.y2;
+    return {
+        top: bound1.y1 <= bound2.y2 && bound1.y1 >= bound2.y1 && above,
+        bottom: bound1.y2 >= bound2.y1 && bound1.y2 <= bound2.y2 && above,
+        left: bound1.x1 <= bound2.x2 && bound1.x1 >= bound2.x1 && beside,
+        right: bound1.x2 >= bound2.x1 && bound1.x2 <= bound2.x2 && beside,
+    }
+}
+
 export function normalize(x, y) {
     const length = Math.sqrt(x ** 2 + y ** 2);
     return {
         x: x / length || 0,
         y: y / length || 0,
     };
+}
+
+export function clamp(num, min, max) {
+    return Math.min(Math.max(num, min), max);
 }
