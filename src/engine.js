@@ -1,6 +1,5 @@
 export class Game {
     keys = {};
-    #deltaT = 16;
 
     constructor(canvas, width, height, update) {
         this.ctx = canvas.getContext("2d");
@@ -57,27 +56,27 @@ export class Object {
     }
 }
 
-export function getInverseCollision(object1, object2) {
-    const bound1 = object1.bounds;
-    const bound2 = object2.bounds;
-    return {
-        top: bound1.y1 <= bound2.y1,
-        bottom: bound1.y2 >= bound2.y2,
-        left: bound1.x1 <= bound2.x1,
-        right: bound1.x2 >= bound2.x2,
-    }
-}
-
 export function getCollision(object1, object2) {
     const bound1 = object1.bounds;
     const bound2 = object2.bounds;
     const above = bound1.x2 > bound2.x1 && bound1.x1 < bound2.x2;
     const beside = bound1.y2 > bound2.y1 && bound1.y1 < bound2.y2;
     return {
-        top: bound1.y1 <= bound2.y2 && bound1.y1 >= bound2.y1 && above,
-        bottom: bound1.y2 >= bound2.y1 && bound1.y2 <= bound2.y2 && above,
-        left: bound1.x1 <= bound2.x2 && bound1.x1 >= bound2.x1 && beside,
-        right: bound1.x2 >= bound2.x1 && bound1.x2 <= bound2.x2 && beside,
+        top: bound1.y1 <= bound2.y2 && bound1.y1 >= bound2.y1 && above ? bound1.y1 - bound2.y2 : null,
+        bottom: bound1.y2 >= bound2.y1 && bound1.y2 <= bound2.y2 && above ? bound1.y2 - bound2.y1 : null,
+        left: bound1.x1 <= bound2.x2 && bound1.x1 >= bound2.x1 && beside ? bound1.x1 - bound2.x2 : null,
+        right: bound1.x2 >= bound2.x1 && bound1.x2 <= bound2.x2 && beside ? bound1.x2 - bound2.x1 : null,
+    }
+}
+
+export function getInverseCollision(object1, object2) {
+    const bound1 = object1.bounds;
+    const bound2 = object2.bounds;
+    return {
+        top: bound1.y1 <= bound2.y1 ? bound1.y1 - bound2.y1 : null,
+        bottom: bound1.y2 >= bound2.y2 ? bound1.y2 - bound2.y2 : null,
+        left: bound1.x1 <= bound2.x1 ? bound1.x1 - bound2.x1 : null,
+        right: bound1.x2 >= bound2.x2 ? bound1.x2 - bound2.x2 : null,
     }
 }
 

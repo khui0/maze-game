@@ -72,34 +72,37 @@ function update(deltaT) {
 
     // Horizontal movement
     (() => {
-        const sign = Math.sign(player.velocityX);
-        player.velocityX = Math.abs(player.velocityX) - (friction * deltaT);
-        if (player.velocityX < 0) {
-            player.velocityX = 0;
+        // Calculate friction
+        player.velocityX -= friction * deltaT * Math.sign(player.velocityX);
+        // Has collision from the left
+        if (hasCollision("left") !== false) {
+            player.velocityX = engine.clamp(player.velocityX, 0, Infinity);
+            player.x -= hasCollision("left");
         }
-        player.velocityX *= sign;
-        // Prohibit player from moving in direction with collision
-        hasCollision("left") && (player.x -= hasCollision("left"));
-        hasCollision("left") && (player.velocityX = engine.clamp(player.velocityX, 0, Infinity));
-        hasCollision("right") && (player.velocityX = engine.clamp(player.velocityX, -Infinity, 0));
+        // Has collision from the right
+        if (hasCollision("right") !== false) {
+            player.velocityX = engine.clamp(player.velocityX, -Infinity, 0);
+            player.x -= hasCollision("right");
+        }
         player.x += player.velocityX * deltaT;
     })();
 
     // Vertical movement
     (() => {
-        const sign = Math.sign(player.velocityY);
-        player.velocityY = Math.abs(player.velocityY) - friction * deltaT;
-        if (player.velocityY < 0) {
-            player.velocityY = 0;
+        // Calculate friction
+        player.velocityY -= friction * deltaT * Math.sign(player.velocityY);
+        // Has collision from the top
+        if (hasCollision("top") !== false) {
+            player.velocityY = engine.clamp(player.velocityY, 0, Infinity);
+            player.y -= hasCollision("top");
         }
-        player.velocityY *= sign || 0;
-        // Prohibit player from moving in directionw with collision
-        hasCollision("top") && (player.velocityY = engine.clamp(player.velocityY, 0, Infinity));
-        hasCollision("bottom") && (player.velocityY = engine.clamp(player.velocityY, -Infinity, 0));
+        // Has collision from the bottom
+        if (hasCollision("bottom") !== false) {
+            player.velocityY = engine.clamp(player.velocityY, -Infinity, 0);
+            player.y -= hasCollision("bottom");
+        }
         player.y += player.velocityY * deltaT;
     })();
-
-    console.log(player.x, player.y, hasCollision("left"));
 
     // Collision events
     (() => {
@@ -108,7 +111,6 @@ function update(deltaT) {
             objects.forEach(wall => {
                 wall.setBackground("lime");
             });
-            // Alert win
         }
     })();
 
@@ -135,9 +137,9 @@ function update(deltaT) {
     })();
 
     function hasCollision(direction) {
-        const collision = collisions.find(item => item[direction] != false);
-        if (collision) {
-            return collision[direction];
+        const value = collisions.find(item => item[direction] !== null);
+        if (value) {
+            return value[direction];
         }
         return false;
     }
