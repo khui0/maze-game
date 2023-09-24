@@ -37,6 +37,7 @@ const objects = [
 ];
 
 function update(deltaT) {
+    // Get collisions
     const collisions = [engine.getInverseCollision(player, world)];
     objects.forEach(object => {
         collisions.push(engine.getCollision(player, object));
@@ -66,14 +67,15 @@ function update(deltaT) {
         player.velocityY = vector.y * speed;
     }
 
-    // console.log(vector.x, vector.y);
-    // console.log(x, y);
-    // console.log(player.velocityX, player.velocityY);
-
     // Horizontal movement
     (() => {
         // Calculate friction
-        player.velocityX -= friction * deltaT * Math.sign(player.velocityX);
+        const sign = Math.sign(player.velocityX);
+        player.velocityX = Math.abs(player.velocityX) - (friction * deltaT);
+        if (player.velocityX < 0) {
+            player.velocityX = 0;
+        }
+        player.velocityX *= sign;
         // Has collision from the left
         if (hasCollision("left") !== false) {
             player.velocityX = engine.clamp(player.velocityX, 0, Infinity);
@@ -90,7 +92,12 @@ function update(deltaT) {
     // Vertical movement
     (() => {
         // Calculate friction
-        player.velocityY -= friction * deltaT * Math.sign(player.velocityY);
+        const sign = Math.sign(player.velocityY);
+        player.velocityY = Math.abs(player.velocityY) - (friction * deltaT);
+        if (player.velocityY < 0) {
+            player.velocityY = 0;
+        }
+        player.velocityY *= sign;
         // Has collision from the top
         if (hasCollision("top") !== false) {
             player.velocityY = engine.clamp(player.velocityY, 0, Infinity);
@@ -114,8 +121,9 @@ function update(deltaT) {
         }
     })();
 
-    // Draw
+    // Draw frame
     (() => {
+        // Clear canvas
         game.ctx.clearRect(world.x, world.y, world.width, world.height);
 
         // Draw text
@@ -127,15 +135,18 @@ function update(deltaT) {
             game.ctx.fillText("End", 50, 395);
         })();
 
+        // Draw player
         game.ctx.fillStyle = player.background;
         game.ctx.fillRect(player.x, player.y, player.width, player.height);
 
+        // Draw objects
         objects.forEach(object => {
             game.ctx.fillStyle = object.background;
             game.ctx.fillRect(object.x, object.y, object.width, object.height);
         });
     })();
 
+    // Check for collisions
     function hasCollision(direction) {
         const value = collisions.find(item => item[direction] !== null);
         if (value) {
