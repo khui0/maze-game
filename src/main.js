@@ -6,8 +6,8 @@ const game = new engine.Game(document.getElementById("game"), 400, 400, update);
 let hasWon = false;
 
 const world = new engine.Object(0, 0, 400, 400);
-const speed = 0.25;
-const friction = 0.005;
+const speed = 0.2;
+const friction = 0.001;
 
 const player = new engine.Object(325, 25, 40, 40).setBackground("red");
 const finish = new engine.Object(15, 390, 75, 10);
@@ -37,61 +37,69 @@ const objects = [
 ];
 
 function update(deltaT) {
-    const collision = [engine.getInverseCollision(player, world)];
+    const collisions = [engine.getInverseCollision(player, world)];
     objects.forEach(object => {
-        collision.push(engine.getCollision(player, object));
+        collisions.push(engine.getCollision(player, object));
     });
 
-    player.velocityX = 0;
-    player.velocityY = 0;
+    let x = 0;
+    let y = 0;
 
-    // Player inputs
+    // Get player input direction
     if (game.keys["w"]) {
-        player.velocityY += -speed;
+        y += -1
     }
-
     if (game.keys["a"]) {
-        player.velocityX += -speed;
+        x += -1;
     }
-
     if (game.keys["s"]) {
-        player.velocityY += speed;
+        y += 1;
     }
-
     if (game.keys["d"]) {
-        player.velocityX += speed;
+        x += 1;
     }
 
-    const vector = engine.normalize(player.velocityX, player.velocityY);
-    player.velocityX = vector.x * speed;
-    player.velocityY = vector.y * speed;
+    // Set player velocity
+    if (x != 0 || y != 0) {
+        const vector = engine.normalize(x, y);
+        player.velocityX = vector.x * speed;
+        player.velocityY = vector.y * speed;
+    }
 
-    // Move player
-    if (true) {
-        const sign = Math.sign(player.velocityX)
-        player.velocityX = Math.abs(player.velocityX) - friction * deltaT;
+    // console.log(vector.x, vector.y);
+    // console.log(x, y);
+    // console.log(player.velocityX, player.velocityY);
+
+    // Horizontal movement
+    (() => {
+        const sign = Math.sign(player.velocityX);
+        player.velocityX = Math.abs(player.velocityX) - (friction * deltaT);
         if (player.velocityX < 0) {
             player.velocityX = 0;
         }
-        player.velocityX *= sign || 0;
+        player.velocityX *= sign;
+        // Prohibit player from moving in direction with collision
+        hasCollision("left") && (player.x -= hasCollision("left"));
         hasCollision("left") && (player.velocityX = engine.clamp(player.velocityX, 0, Infinity));
         hasCollision("right") && (player.velocityX = engine.clamp(player.velocityX, -Infinity, 0));
         player.x += player.velocityX * deltaT;
-    }
+    })();
 
-    if (true) {
+    // Vertical movement
+    (() => {
         const sign = Math.sign(player.velocityY);
         player.velocityY = Math.abs(player.velocityY) - friction * deltaT;
         if (player.velocityY < 0) {
             player.velocityY = 0;
         }
         player.velocityY *= sign || 0;
+        // Prohibit player from moving in directionw with collision
         hasCollision("top") && (player.velocityY = engine.clamp(player.velocityY, 0, Infinity));
         hasCollision("bottom") && (player.velocityY = engine.clamp(player.velocityY, -Infinity, 0));
         player.y += player.velocityY * deltaT;
-    }
+    })();
 
-    player.round();
+    console.log(player.x, player.y, hasCollision("left"));
 
     // Collision events
     (() => {
@@ -127,6 +135,10 @@ function update(deltaT) {
     })();
 
     function hasCollision(direction) {
-        return collision.some(item => item[direction] == true);
+        const collision = collisions.find(item => item[direction] != false);
+        if (collision) {
+            return collision[direction];
+        }
+        return false;
     }
 }
