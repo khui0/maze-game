@@ -51,10 +51,11 @@ export class Object {
 }
 
 export function getCollision(object1, object2) {
+    const MARGIN = 1;
     const bound1 = object1.bounds;
     const bound2 = object2.bounds;
-    const above = bound1.x2 > bound2.x1 && bound1.x1 < bound2.x2;
-    const beside = bound1.y2 > bound2.y1 && bound1.y1 < bound2.y2;
+    const above = bound1.x2 > bound2.x1 + MARGIN && bound1.x1 < bound2.x2 - MARGIN;
+    const beside = bound1.y2 > bound2.y1 + MARGIN && bound1.y1 < bound2.y2 - MARGIN;
     return {
         top: bound1.y1 <= bound2.y2 && bound1.y1 >= bound2.y1 && above,
         bottom: bound1.y2 >= bound2.y1 && bound1.y2 <= bound2.y2 && above,

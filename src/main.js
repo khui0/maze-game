@@ -10,8 +10,8 @@ const friction = 0.001;
 const player = new engine.Object(325, 25, 40, 40).setBackground("red");
 const finish = new engine.Object(15, 390, 75, 10).setBackground("blue");
 const objects = [
-    new engine.Object(150, 15, 5, 100)
-        .setBackground("black"),
+    new engine.Object(100, 20, 80, 80)
+        .setBackground("rgba(0,0,0,0.5)"),
 ];
 const draw = [
     player,
@@ -57,22 +57,21 @@ function update(deltaT) {
             collisions.push(engine.getCollision(player, object));
         });
 
-        // console.log(engine.getCollision(player, objects[0]));
-        if (hasCollision("top")) {
+        if (hasCollision("top") != -1) {
             player.velocityY = engine.clamp(player.velocityY, 0, Infinity);
         }
-        if (hasCollision("bottom")) {
+        if (hasCollision("bottom") != -1) {
             player.velocityY = engine.clamp(player.velocityY, -Infinity, 0);
         }
-        if (hasCollision("left")) {
+        if (hasCollision("left") != -1) {
             player.velocityX = engine.clamp(player.velocityX, 0, Infinity);
         }
-        if (hasCollision("right")) {
+        if (hasCollision("right") != -1) {
             player.velocityX = engine.clamp(player.velocityX, -Infinity, 0);
         }
 
         function hasCollision(direction) {
-            return collisions.some(item => item[direction]);
+            return collisions.findIndex(item => item[direction]);
         }
     })();
 
