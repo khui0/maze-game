@@ -44,12 +44,6 @@ export class Object {
         }
     }
 
-    round() {
-        this.x = Math.round(this.x);
-        this.y = Math.round(this.y);
-        return this;
-    }
-
     setBackground(color) {
         this.background = color;
         return this;
