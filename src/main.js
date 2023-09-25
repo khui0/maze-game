@@ -8,30 +8,15 @@ const speed = 0.2;
 const friction = 0.001;
 
 const player = new engine.Object(325, 25, 40, 40).setBackground("red");
-const finish = new engine.Object(15, 390, 75, 10);
+const finish = new engine.Object(15, 390, 75, 10).setBackground("blue");
 const objects = [
-    new engine.Object(10, 10, 300, 5)
-        .setBackground("black"),
-    new engine.Object(10, 10, 5, 380)
-        .setBackground("black"),
-    new engine.Object(385, 10, 5, 380)
-        .setBackground("black"),
-    new engine.Object(90, 385, 300, 5)
-        .setBackground("black"),
     new engine.Object(150, 15, 5, 100)
         .setBackground("black"),
-    new engine.Object(185, 255, 5, 130)
-        .setBackground("black"),
-    new engine.Object(15, 310, 80, 5)
-        .setBackground("black"),
-    new engine.Object(100, 195, 185, 5)
-        .setBackground("black"),
-    new engine.Object(285, 145, 5, 110)
-        .setBackground("black"),
-    new engine.Object(290, 145, 95, 5)
-        .setBackground("black"),
-    new engine.Object(290, 250, 95, 5)
-        .setBackground("black"),
+];
+const draw = [
+    player,
+    ...objects,
+    finish,
 ];
 
 let hasWon = false;
@@ -65,35 +50,29 @@ function update(deltaT) {
     player.velocityX = engine.clamp(Math.abs(player.velocityX) - (friction * deltaT), 0, Infinity) * Math.sign(player.velocityX);
     player.velocityY = engine.clamp(Math.abs(player.velocityY) - (friction * deltaT), 0, Infinity) * Math.sign(player.velocityY);
 
+    // Collisions
     (() => {
-        if (hasCollision("top") !== false) {
+        const collisions = [engine.getInverseCollision(player, world)];
+        objects.forEach(object => {
+            collisions.push(engine.getCollision(player, object));
+        });
+
+        // console.log(engine.getCollision(player, objects[0]));
+        if (hasCollision("top")) {
             player.velocityY = engine.clamp(player.velocityY, 0, Infinity);
-            player.y -= hasCollision("top");
         }
-        if (hasCollision("bottom") !== false) {
+        if (hasCollision("bottom")) {
             player.velocityY = engine.clamp(player.velocityY, -Infinity, 0);
-            player.y -= hasCollision("bottom");
         }
-        if (hasCollision("left") !== false) {
+        if (hasCollision("left")) {
             player.velocityX = engine.clamp(player.velocityX, 0, Infinity);
-            player.x -= hasCollision("left");
         }
-        if (hasCollision("right") !== false) {
+        if (hasCollision("right")) {
             player.velocityX = engine.clamp(player.velocityX, -Infinity, 0);
-            player.x -= hasCollision("right");
         }
 
         function hasCollision(direction) {
-            const collisions = [engine.getInverseCollision(player, world)];
-            objects.forEach(object => {
-                collisions.push(engine.getCollision(player, object));
-            });
-
-            const value = collisions.find(item => item[direction] !== null);
-            if (value) {
-                return value[direction];
-            }
-            return false;
+            return collisions.some(item => item[direction]);
         }
     })();
 
@@ -125,12 +104,8 @@ function update(deltaT) {
             game.ctx.fillText("End", 50, 395);
         })();
 
-        // Draw player
-        game.ctx.fillStyle = player.background;
-        game.ctx.fillRect(player.x, player.y, player.width, player.height);
-
         // Draw objects
-        objects.forEach(object => {
+        draw.forEach(object => {
             game.ctx.fillStyle = object.background;
             game.ctx.fillRect(object.x, object.y, object.width, object.height);
         });
