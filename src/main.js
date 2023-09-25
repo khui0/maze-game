@@ -61,25 +61,9 @@ function update(deltaT) {
         player.velocityY = vector.y * speed;
     }
 
-    // Horizontal friction
-    (() => {
-        const sign = Math.sign(player.velocityX);
-        player.velocityX = Math.abs(player.velocityX) - (friction * deltaT);
-        if (player.velocityX < 0) {
-            player.velocityX = 0;
-        }
-        player.velocityX *= sign;
-    })();
-
-    // Vertical friction
-    (() => {
-        const sign = Math.sign(player.velocityY);
-        player.velocityY = Math.abs(player.velocityY) - (friction * deltaT);
-        if (player.velocityY < 0) {
-            player.velocityY = 0;
-        }
-        player.velocityY *= sign;
-    })();
+    // Friction
+    player.velocityX = engine.clamp(Math.abs(player.velocityX) - (friction * deltaT), 0, Infinity) * Math.sign(player.velocityX);
+    player.velocityY = engine.clamp(Math.abs(player.velocityY) - (friction * deltaT), 0, Infinity) * Math.sign(player.velocityY);
 
     (() => {
         if (hasCollision("top") !== false) {
