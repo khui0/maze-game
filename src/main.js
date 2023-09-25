@@ -116,7 +116,7 @@ function update(deltaT) {
 
         // Draw text
         (() => {
-            game.ctx.font = "20px Arial, sans-serif";
+            game.ctx.font = "20px monospace, monospace";
             game.ctx.textAlign = "center";
             game.ctx.fillStyle = "black";
             game.ctx.fillText("Start", 345, 20);
@@ -129,4 +129,6 @@ function update(deltaT) {
             game.ctx.fillRect(object.x, object.y, object.width, object.height);
         });
     })();
+
+    document.getElementById("fps").textContent = (1000 / deltaT).toFixed(2);
 }
