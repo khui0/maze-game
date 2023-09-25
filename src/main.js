@@ -8,10 +8,30 @@ const speed = 0.2;
 const friction = 0.001;
 
 const player = new engine.Object(325, 25, 40, 40).setBackground("red");
-const finish = new engine.Object(15, 390, 75, 10).setBackground("blue");
+const finish = new engine.Object(15, 390, 75, 10);
 const objects = [
-    new engine.Object(100, 20, 80, 80)
-        .setBackground("rgba(0,0,0,0.5)"),
+    new engine.Object(10, 10, 300, 5)
+        .setBackground("black"),
+    new engine.Object(10, 10, 5, 380)
+        .setBackground("black"),
+    new engine.Object(385, 10, 5, 380)
+        .setBackground("black"),
+    new engine.Object(90, 385, 300, 5)
+        .setBackground("black"),
+    new engine.Object(150, 15, 5, 100)
+        .setBackground("black"),
+    new engine.Object(185, 255, 5, 130)
+        .setBackground("black"),
+    new engine.Object(15, 310, 80, 5)
+        .setBackground("black"),
+    new engine.Object(100, 195, 185, 5)
+        .setBackground("black"),
+    new engine.Object(285, 145, 5, 110)
+        .setBackground("black"),
+    new engine.Object(290, 145, 95, 5)
+        .setBackground("black"),
+    new engine.Object(290, 250, 95, 5)
+        .setBackground("black"),
 ];
 const draw = [
     player,
@@ -105,7 +125,7 @@ function update(deltaT) {
 
         // Draw objects
         draw.forEach(object => {
-            game.ctx.fillStyle = object.background;
+            game.ctx.fillStyle = object.background || "transparent";
             game.ctx.fillRect(object.x, object.y, object.width, object.height);
         });
     })();
