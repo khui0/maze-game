@@ -9,7 +9,7 @@ const friction = 0.001;
 
 const player = new engine.Object(325, 25, 40, 40).setBackground("red");
 const finish = new engine.Object(15, 390, 75, 10);
-const objects = [
+const walls = [
     new engine.Object(10, 10, 300, 5)
         .setBackground("black"),
     new engine.Object(10, 10, 5, 380)
@@ -35,7 +35,7 @@ const objects = [
 ];
 const draw = [
     player,
-    ...objects,
+    ...walls,
     finish,
 ];
 
@@ -73,20 +73,20 @@ function update(deltaT) {
     // Collisions
     (() => {
         const collisions = [engine.getInverseCollision(player, world)];
-        objects.forEach(object => {
+        walls.forEach(object => {
             collisions.push(engine.getCollision(player, object));
         });
 
         if (hasCollision("top") != -1) {
             player.velocityY = engine.clamp(player.velocityY, 0, Infinity);
         }
-        if (hasCollision("bottom") != -1) {
+        else if (hasCollision("bottom") != -1) {
             player.velocityY = engine.clamp(player.velocityY, -Infinity, 0);
         }
         if (hasCollision("left") != -1) {
             player.velocityX = engine.clamp(player.velocityX, 0, Infinity);
         }
-        if (hasCollision("right") != -1) {
+        else if (hasCollision("right") != -1) {
             player.velocityX = engine.clamp(player.velocityX, -Infinity, 0);
         }
 
@@ -103,7 +103,7 @@ function update(deltaT) {
     (() => {
         if (engine.getCollision(player, finish).bottom && !hasWon) {
             hasWon = true;
-            objects.forEach(wall => {
+            walls.forEach(wall => {
                 wall.setBackground("lime");
             });
         }
