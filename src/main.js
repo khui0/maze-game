@@ -74,20 +74,24 @@ function update(deltaT) {
     (() => {
         const collisions = [engine.getInverseCollision(player, world)];
         walls.forEach(object => {
-            collisions.push(engine.getCollision(player, object));
+            collisions.push(engine.getCollision(player, object, player.velocityX * deltaT, player.velocityY * deltaT));
         });
 
         if (hasCollision("top") != -1) {
             player.velocityY = engine.clamp(player.velocityY, 0, Infinity);
+            player.y = collisions[hasCollision("top")].contact.top;
         }
         else if (hasCollision("bottom") != -1) {
             player.velocityY = engine.clamp(player.velocityY, -Infinity, 0);
+            player.y = collisions[hasCollision("bottom")].contact.bottom;
         }
         if (hasCollision("left") != -1) {
             player.velocityX = engine.clamp(player.velocityX, 0, Infinity);
+            player.x = collisions[hasCollision("left")].contact.left;
         }
         else if (hasCollision("right") != -1) {
             player.velocityX = engine.clamp(player.velocityX, -Infinity, 0);
+            player.x = collisions[hasCollision("right")].contact.right;
         }
 
         function hasCollision(direction) {

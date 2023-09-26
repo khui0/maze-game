@@ -50,28 +50,47 @@ export class Object {
     }
 }
 
-export function getCollision(object1, object2) {
-    const MARGIN = 1;
+export function getCollision(object1, object2, offsetX = 0, offsetY = 0) {
     const bound1 = object1.bounds;
     const bound2 = object2.bounds;
-    const above = bound1.x2 > bound2.x1 + MARGIN && bound1.x1 < bound2.x2 - MARGIN;
-    const beside = bound1.y2 > bound2.y1 + MARGIN && bound1.y1 < bound2.y2 - MARGIN;
+    const above = bound1.x2 > bound2.x1 && bound1.x1 < bound2.x2;
+    const beside = bound1.y2 > bound2.y1 && bound1.y1 < bound2.y2;
+    bound1.y1 += offsetY;
+    bound1.y2 += offsetY;
+    bound1.x1 += offsetX;
+    bound1.x2 += offsetX;
     return {
         top: bound1.y1 <= bound2.y2 && bound1.y1 >= bound2.y1 && above,
         bottom: bound1.y2 >= bound2.y1 && bound1.y2 <= bound2.y2 && above,
         left: bound1.x1 <= bound2.x2 && bound1.x1 >= bound2.x1 && beside,
         right: bound1.x2 >= bound2.x1 && bound1.x2 <= bound2.x2 && beside,
+        contact: {
+            top: bound2.y2,
+            bottom: bound2.y1 - object1.height,
+            left: bound2.x2,
+            right: bound2.x1 - object1.width,
+        },
     }
 }
 
-export function getInverseCollision(object1, object2) {
+export function getInverseCollision(object1, object2, offsetX = 0, offsetY = 0) {
     const bound1 = object1.bounds;
     const bound2 = object2.bounds;
+    bound1.y1 += offsetY;
+    bound1.y2 += offsetY;
+    bound1.x1 += offsetX;
+    bound1.x2 += offsetX;
     return {
         top: bound1.y1 <= bound2.y1,
         bottom: bound1.y2 >= bound2.y2,
         left: bound1.x1 <= bound2.x1,
         right: bound1.x2 >= bound2.x2,
+        contact: {
+            top: bound2.y1,
+            bottom: bound2.y2 - object1.height,
+            left: bound2.x1,
+            right: bound2.x2 - object1.width,
+        },
     }
 }
 
