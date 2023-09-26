@@ -1,7 +1,7 @@
 import "./style.css";
 import * as engine from "./engine";
 
-const game = new engine.Game(document.getElementById("game"), 400, 400, update);
+const game = new engine.Game(document.getElementById("game"), update);
 
 const world = new engine.Object(0, 0, 400, 400);
 const speed = 0.2;
@@ -39,6 +39,7 @@ const draw = [
     finish,
 ];
 
+let fpsCounter = true;
 let hasWon = false;
 
 function update(deltaT) {
@@ -116,16 +117,16 @@ function update(deltaT) {
     // Draw frame
     (() => {
         // Clear canvas
-        game.ctx.clearRect(world.x, world.y, world.width, world.height);
+        game.ctx.clearRect(0, 0, game.ctx.canvas.width, game.ctx.canvas.height);
 
         // Draw text
-        (() => {
-            game.ctx.font = "20px monospace, monospace";
-            game.ctx.textAlign = "center";
-            game.ctx.fillStyle = "black";
-            game.ctx.fillText("Start", 345, 20);
-            game.ctx.fillText("End", 50, 395);
-        })();
+        const fps = (1000 / deltaT).toFixed(2);
+        game.ctx.font = "20px monospace, monospace";
+        game.ctx.textAlign = "center";
+        game.ctx.textBaseline = "alphabetic";
+        game.ctx.fillStyle = "black";
+        game.ctx.fillText("Start", 345, 20);
+        game.ctx.fillText("End", 50, 395);
 
         // Draw objects
         draw.forEach(object => {
@@ -133,7 +134,13 @@ function update(deltaT) {
             game.ctx.fillStyle = object.background || "transparent";
             game.ctx.fillRect(bounds.x1, bounds.y1, bounds.x2 - bounds.x1, bounds.y2 - bounds.y1);
         });
-    })();
 
-    document.getElementById("fps").textContent = (1000 / deltaT).toFixed(2);
+        // Draw fps
+        if (fpsCounter) {
+            game.ctx.textAlign = "left";
+            game.ctx.textBaseline = "hanging";
+            game.ctx.fillStyle = "lime";
+            game.ctx.fillText(`${fps} FPS`, 10, 10);
+        }
+    })();
 }

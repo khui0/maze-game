@@ -1,19 +1,27 @@
 export class Game {
     keys = {};
 
-    constructor(canvas, width, height, update) {
+    constructor(canvas, update) {
         this.ctx = canvas.getContext("2d");
-        canvas.width = width;
-        canvas.height = height;
 
         let previous = 0;
         function frame(time) {
             const deltaT = time - previous;
             previous = time;
+            resize();
             update(deltaT);
             requestAnimationFrame(frame);
         }
         requestAnimationFrame(frame);
+
+        function resize() {
+            const w = canvas.clientWidth;
+            const h = canvas.clientHeight;
+            if (canvas.width != w || canvas.height != h) {
+                canvas.width = w;
+                canvas.height = h;
+            }
+        }
 
         document.addEventListener("keydown", e => {
             this.keys[e.key] = true;
