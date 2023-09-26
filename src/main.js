@@ -125,8 +125,9 @@ function update(deltaT) {
 
         // Draw objects
         draw.forEach(object => {
+            const bounds = object.bounds;
             game.ctx.fillStyle = object.background || "transparent";
-            game.ctx.fillRect(object.x, object.y, object.width, object.height);
+            game.ctx.fillRect(bounds.x1, bounds.y1, bounds.x2 - bounds.x1, bounds.y2 - bounds.y1);
         });
     })();
 
