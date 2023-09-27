@@ -82,7 +82,7 @@ function update(deltaT) {
 
     // Collisions
     (() => {
-        const collisions = [engine.getInverseCollision(player, world)];
+        const collisions = [engine.getInverseCollision(player, world, player.velocityX * deltaT, player.velocityY * deltaT)];
         walls.forEach(object => {
             collisions.push(engine.getCollision(player, object, player.velocityX * deltaT, player.velocityY * deltaT));
         });
