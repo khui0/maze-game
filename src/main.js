@@ -55,16 +55,17 @@ function update(deltaT) {
     let y = 0;
 
     // Get player input direction
-    if (game.keys["w"]) {
+    console.log(game.keys)
+    if (game.keys["w"] || game.keys["ArrowUp"]) {
         y += -1
     }
-    if (game.keys["a"]) {
+    if (game.keys["a"] || game.keys["ArrowLeft"]) {
         x += -1;
     }
-    if (game.keys["s"]) {
+    if (game.keys["s"] || game.keys["ArrowDown"]) {
         y += 1;
     }
-    if (game.keys["d"]) {
+    if (game.keys["d"] || game.keys["ArrowRight"]) {
         x += 1;
     }
 
@@ -120,6 +121,9 @@ function update(deltaT) {
     (() => {
         if (engine.getCollision(player, finish).bottom && !hasWon) {
             hasWon = true;
+            walls.forEach(wall => {
+                wall.setBackground("lime");
+            });
         }
     })();
 
@@ -137,6 +141,10 @@ function update(deltaT) {
         const endCoords = camera.toScreen(50, 395);
         game.ctx.fillText("Start", startCoords.x, startCoords.y);
         game.ctx.fillText("End", endCoords.x, endCoords.y);
+        if (hasWon) {
+            const winCoords = camera.toScreen(200, 180);
+            game.ctx.fillText("You Win!", winCoords.x, winCoords.y);
+        }
 
         // Draw objects
         draw.forEach(object => {
