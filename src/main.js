@@ -2,7 +2,7 @@ import "./style.css";
 import * as engine from "./engine";
 
 const game = new engine.Game(document.getElementById("game"), update);
-const camera = new engine.Camera(game.ctx.canvas, 0, 0, 200, 0.05);
+const camera = new engine.Camera(game.ctx.canvas, 0, 0, 400, 0.05);
 
 const world = new engine.Object(0, 0, 400, 400);
 const speed = 0.2;
@@ -44,6 +44,14 @@ let fpsCounter = true;
 let hasWon = false;
 
 function update(deltaT) {
+    // Dramatic camera zoom
+    if (!hasWon && camera.scale != 200) {
+        camera.scale = 200;
+    }
+    else {
+        camera.scale = 500;
+    }
+
     let x = 0;
     let y = 0;
 
