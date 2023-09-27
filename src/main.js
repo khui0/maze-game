@@ -1,10 +1,9 @@
-import "./style.css";
 import * as engine from "./engine";
 
 const game = new engine.Game(document.getElementById("game"), update);
 const camera = new engine.Camera(game.ctx.canvas, 0, 0, 400, 0.05);
 
-const world = new engine.Object(0, 0, 400, 400);
+const world = new engine.Object(-100, -100, 600, 600);
 const speed = 0.2;
 const friction = 0.001;
 
@@ -121,9 +120,6 @@ function update(deltaT) {
     (() => {
         if (engine.getCollision(player, finish).bottom && !hasWon) {
             hasWon = true;
-            walls.forEach(wall => {
-                wall.setBackground("lime");
-            });
         }
     })();
 
@@ -137,7 +133,7 @@ function update(deltaT) {
         game.ctx.textAlign = "center";
         game.ctx.textBaseline = "alphabetic";
         game.ctx.fillStyle = "black";
-        const startCoords = camera.toScreen(345, 20);
+        const startCoords = camera.toScreen(348, 20);
         const endCoords = camera.toScreen(50, 395);
         game.ctx.fillText("Start", startCoords.x, startCoords.y);
         game.ctx.fillText("End", endCoords.x, endCoords.y);
