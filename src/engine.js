@@ -33,6 +33,50 @@ export class Game {
     }
 }
 
+export class Camera {
+    #x;
+    #y;
+    #scale;
+
+    constructor(canvas, x, y, scale, rigidness) {
+        this.canvas = canvas;
+        this.#x = x;
+        this.#y = y;
+        this.#scale = scale;
+        this.rigidness = rigidness;
+    }
+
+    set x(value) {
+        this.#x = this.#lerp(this.#x, value, this.rigidness);
+    }
+
+    set y(value) {
+        this.#y = this.#lerp(this.#y, value, this.rigidness);
+    }
+
+    set scale(value) {
+        this.#scale = this.#lerp(this.#scale, value, this.rigidness);
+    }
+
+    get ratio() {
+        return this.canvas.clientHeight / this.#scale;
+    }
+
+    #lerp(a, b, alpha) {
+        return a + alpha * (b - a);
+    }
+
+    toScreen(x, y) {
+        x -= this.#x;
+        y -= this.#y;
+        x *= this.ratio;
+        y *= this.ratio;
+        x += this.canvas.clientWidth / 2;
+        y += this.canvas.clientHeight / 2;
+        return { x, y };
+    }
+}
+
 export class Object {
     constructor(x = 0, y = 0, width = 0, height = 0) {
         this.x = x;
@@ -110,6 +154,6 @@ export function normalize(x, y) {
     };
 }
 
-export function clamp(num, min, max) {
-    return Math.min(Math.max(num, min), max);
+export function clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max);
 }

@@ -2,6 +2,7 @@ import "./style.css";
 import * as engine from "./engine";
 
 const game = new engine.Game(document.getElementById("game"), update);
+const camera = new engine.Camera(game.ctx.canvas, 0, 0, 200, 0.05);
 
 const world = new engine.Object(0, 0, 400, 400);
 const speed = 0.2;
@@ -104,6 +105,10 @@ function update(deltaT) {
     player.x += player.velocityX * deltaT;
     player.y += player.velocityY * deltaT;
 
+    // Move camera
+    camera.x = player.x + player.width / 2;
+    camera.y = player.y + player.height / 2;
+
     // Collision events
     (() => {
         if (engine.getCollision(player, finish).bottom && !hasWon) {
@@ -120,23 +125,32 @@ function update(deltaT) {
         game.ctx.clearRect(0, 0, game.ctx.canvas.width, game.ctx.canvas.height);
 
         // Draw text
-        const fps = (1000 / deltaT).toFixed(2);
-        game.ctx.font = "20px monospace, monospace";
+        game.ctx.font = `${20 * camera.ratio}px monospace, monospace`;
         game.ctx.textAlign = "center";
         game.ctx.textBaseline = "alphabetic";
         game.ctx.fillStyle = "black";
-        game.ctx.fillText("Start", 345, 20);
-        game.ctx.fillText("End", 50, 395);
+        const startCoords = camera.toScreen(345, 20);
+        const endCoords = camera.toScreen(50, 395);
+        game.ctx.fillText("Start", startCoords.x, startCoords.y);
+        game.ctx.fillText("End", endCoords.x, endCoords.y);
 
         // Draw objects
         draw.forEach(object => {
             const bounds = object.bounds;
+            const a = camera.toScreen(bounds.x1, bounds.y1);
+            const b = camera.toScreen(bounds.x2, bounds.y2);
+            bounds.x1 = a.x;
+            bounds.y1 = a.y;
+            bounds.x2 = b.x;
+            bounds.y2 = b.y;
             game.ctx.fillStyle = object.background || "transparent";
             game.ctx.fillRect(bounds.x1, bounds.y1, bounds.x2 - bounds.x1, bounds.y2 - bounds.y1);
         });
 
         // Draw fps
         if (fpsCounter) {
+            const fps = (1000 / deltaT).toFixed(2);
+            game.ctx.font = `20px monospace, monospace`;
             game.ctx.textAlign = "left";
             game.ctx.textBaseline = "hanging";
             game.ctx.fillStyle = "lime";
